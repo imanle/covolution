@@ -18,20 +18,21 @@ __global__ void convolution_tiled_kernel(float* input, float* output, unsigned i
         if((in_row >= 0) && (in_row< height) && (in_col >= 0) && (in_col < width) ) {
         cov[threadIdx.y][threadIdx.x]= cov[in_row*width + in_col];
         }
-    
-    else{
+        else{
      cov[threadIdx.y][threadIdx.x]=0;
-     }
+        }
    __syncthreads();
      if(threadIdx.y < OUT_TILE_DIM && threadIdx.x < OUT_TILE_DIM){
         for(i = 0; i < FILTER_DIM; i++) {
             for(j = 0; j < FILTER_DIM; j++) { 
                 sum += filter_c_[i][j] * cov[i+threadIdx.y][j+threadIdx.x];
-} }}
-           __syncthreads();
-          if(out_row < height && out_col < width){
-    output[out_row*width + out_col] = sum;
-          }
+            } 
+        }
+    }
+    __syncthreads();
+    if(out_row < height && out_col < width){
+            output[out_row*width + out_col] = sum;
+    }
      
 
 }
