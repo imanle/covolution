@@ -9,22 +9,22 @@ __constant__ float filter_c[FILTER_DIM][FILTER_DIM];
 __global__ void convolution_tiled_kernel(float* input, float* output, unsigned int width, unsigned int height) {
 
      __shared__ float cov[IN_TILE_DIM][IN_TILE_DIM];
-      int row = threadIdx.y + blockIdx.y * OUT_TILE_DIM;
-      int col = threadIdx.x + blockIdx.x * OUT_TILE_DIM;
+      int row = threadIdx.y + blockIdx.y * OUT_TILE_DIM -FILTER_RADIUS;
+      int col = threadIdx.x + blockIdx.x * OUT_TILE_DIM- FILTER_RADIUS;
      
      float sum = 0.0f;
-        if((row >= FILTER_DIM) && (row< height - FILTER_DIM) && (col >= FILTER_DIM) && (col < width - FILTER_DIM) ) {
+        if((row > =0) && (row< height ) && (col >=0) && (col < width ) ) {
           cov[threadIdx.y][threadIdx.x]=input[row*width + col];
         }
         else{
-          cov[threadIdx.y][threadIdx.x]=0;
+          cov[threadIdx.y][threadIdx.x]=0.0f;
         }
    __syncthreads();
-     if(threadIdx.y < OUT_TILE_DIM && threadIdx.x < OUT_TILE_DIM){
+     if((threadIdx.y >= FILTER_RADIUS) && (threadIdx.y < height - FILTER_RADIUS) && (threadIdx.x >= FILTER_RADIUS) &&( threadIdx.x<= width - FILTER_RADIUS )){
         for(int i = 0; i < FILTER_DIM; i++) {
             for(int j = 0; j < FILTER_DIM; j++) { 
                  
-                sum += filter_c[i][j] * cov[FILTER_DIM-i+threadIdx.y][FILTER_DIM-j+threadIdx.x];
+                sum += filter_c[i][j] * cov[i+threadIdx.y- FILTER_RADIUS ][j+threadIdx.x- FILTER_RADIUS ];
             } 
         }
     }
