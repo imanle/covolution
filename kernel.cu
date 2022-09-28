@@ -29,7 +29,7 @@ __global__ void convolution_tiled_kernel(float* input, float* output, unsigned i
             } 
         }
     }
-    __syncthreads();
+   
     if(out_row < height && out_col < width){
             output[out_row*width + out_col] = sum;
     }
