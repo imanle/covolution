@@ -13,7 +13,7 @@ __global__ void convolution_tiled_kernel(float* input, float* output, unsigned i
       int col = threadIdx.x + blockIdx.x * OUT_TILE_DIM;
      
      float sum = 0.0f;
-        if((row >= 0) && (row< height - FILTER_DIM) && (col >= 0) && (col < width - FILTER_DIM) ) {
+        if((row >= FILTER_DIM) && (row< height - FILTER_DIM) && (col >= FILTER_DIM) && (col < width - FILTER_DIM) ) {
           cov[threadIdx.y][threadIdx.x]=input[row*width + col];
         }
         else{
