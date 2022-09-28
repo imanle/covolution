@@ -12,7 +12,7 @@ __global__ void convolution_tiled_kernel(float* input, float* output, unsigned i
       int row = threadIdx.y + blockIdx.y * OUT_TILE_DIM -FILTER_RADIUS;
       int col = threadIdx.x + blockIdx.x * OUT_TILE_DIM- FILTER_RADIUS;
      
-     float sum = 0.0f;
+     
         if((row >=0) && (row< height ) && (col>=0) && (col < width ) ) {
           cov[threadIdx.y][threadIdx.x]=input[row*width + col];
         }
@@ -21,17 +21,19 @@ __global__ void convolution_tiled_kernel(float* input, float* output, unsigned i
         }
    __syncthreads();
      if((threadIdx.y >= FILTER_RADIUS) && threadIdx.y < (IN_TILE_DIM - FILTER_RADIUS) && (threadIdx.x >= FILTER_RADIUS) && threadIdx.x< (IN_TILE_DIM - FILTER_RADIUS )){
-        for(int i = 0; i < FILTER_DIM; i++) {
+        float sum = 0.0f;
+          for(int i = 0; i < FILTER_DIM; i++) {
             for(int j = 0; j < FILTER_DIM; j++) { 
                  
                 sum += filter_c[i][j] * cov[i+threadIdx.y- FILTER_RADIUS ][j+threadIdx.x- FILTER_RADIUS ];
             } 
         }
+          if(row < height && col < width){
+            output[row*width + col] = sum;
+          }
     }
    
-    if(row < height && col < width){
-            output[row*width + col] = sum;
-    }
+    
 }
 
 void copyFilterToGPU(float filter[][FILTER_DIM]) {
