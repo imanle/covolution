@@ -9,14 +9,13 @@ __constant__ float filter_c[FILTER_DIM][FILTER_DIM];
 __global__ void convolution_tiled_kernel(float* input, float* output, unsigned int width, unsigned int height) {
 
      __shared__ float cov[IN_TILE_DIM][IN_TILE_DIM];
-      int out_row = threadIdx.y + blockIdx.y * OUT_TILE_DIM;
-      int out_col = threadIdx.x + blockIdx.x * OUT_TILE_DIM;
-      int in_row = out_row - FILTER_DIM;
-      int in_col = out_col - FILTER_DIM;
+      int row = threadIdx.y + blockIdx.y * OUT_TILE_DIM;
+      int col = threadIdx.x + blockIdx.x * OUT_TILE_DIM;
+    
      
      float sum = 0.0f;
-        if((in_row >= 0) && (in_row< height) && (in_col >= 0) && (in_col < width) ) {
-          cov[threadIdx.y][threadIdx.x]=input[in_row*width + in_col];
+        if((row >= 0) && (row< height - FILTER_DIM) && (col >= 0) && (in_col < width - FILTER_DIM) ) {
+          cov[threadIdx.y][threadIdx.x]=input[row*width + col];
         }
         else{
           cov[threadIdx.y][threadIdx.x]=0;
