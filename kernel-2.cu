@@ -23,8 +23,8 @@ __global__ void convolution_tiled_kernel(float* input, float* output, unsigned i
         }
    __syncthreads();
      if(threadIdx.y < OUT_TILE_DIM && threadIdx.x < OUT_TILE_DIM){
-        for(i = 0; i < FILTER_DIM; i++) {
-            for(j = 0; j < FILTER_DIM; j++) { 
+        for(int i = 0; i < FILTER_DIM; i++) {
+            for(int j = 0; j < FILTER_DIM; j++) { 
                 sum += filter_c_[i][j] * cov[i+threadIdx.y][j+threadIdx.x];
             } 
         }
