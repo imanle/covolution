@@ -26,7 +26,7 @@ __global__ void convolution_tiled_kernel(float* input, float* output, unsigned i
                 output += filter_c_[i][j] * cov[i+threadIdx.y][j+threadIdx.x];
 } }
      
-    output[outRow*width + outCol] = sum;
+    output[OUT_TILE_DIM*width + OUT_TILE_DIM] = sum;
      }
      
      
