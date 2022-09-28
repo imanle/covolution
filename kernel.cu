@@ -20,7 +20,7 @@ __global__ void convolution_tiled_kernel(float* input, float* output, unsigned i
           cov[threadIdx.y][threadIdx.x]=0.0f;
         }
    __syncthreads();
-     if((threadIdx.y >= FILTER_RADIUS) && (threadIdx.y < height - FILTER_RADIUS) && (threadIdx.x >= FILTER_RADIUS) &&( threadIdx.x<= width - FILTER_RADIUS )){
+     if((threadIdx.y >= FILTER_RADIUS) && (threadIdx.y < IN_TILE_DIM - FILTER_RADIUS) && (threadIdx.x >= FILTER_RADIUS) &&( threadIdx.x<= IN_TILE_DIM - FILTER_RADIUS )){
         for(int i = 0; i < FILTER_DIM; i++) {
             for(int j = 0; j < FILTER_DIM; j++) { 
                  
