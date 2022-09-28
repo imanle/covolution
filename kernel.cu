@@ -14,7 +14,7 @@ __global__ void convolution_tiled_kernel(float* input, float* output, unsigned i
     
      
      float sum = 0.0f;
-        if((row >= 0) && (row< height - FILTER_DIM) && (col >= 0) && (in_col < width - FILTER_DIM) ) {
+        if((row >= 0) && (row< height - FILTER_DIM) && (col >= 0) && (col < width - FILTER_DIM) ) {
           cov[threadIdx.y][threadIdx.x]=input[row*width + col];
         }
         else{
@@ -29,8 +29,8 @@ __global__ void convolution_tiled_kernel(float* input, float* output, unsigned i
         }
     }
    
-    if(out_row < height && out_col < width){
-            output[out_row*width + out_col] = sum;
+    if(row < height && col < width){
+            output[row*width + col] = sum;
     }
 }
 
